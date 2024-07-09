@@ -20,8 +20,9 @@ const TIME_LIMIT: u64 = 1500;
 const WAKE_UP_COUNT: u64 = 100;
 
 
-// Invoke the solver.
-fn invoked_solver(args: Args, mut board: Board, player: Player) -> (f32, usize, usize) {
+// Invoke the agent with a timer.
+// If the agent exceeds the timer, it will be killed and the game will be forfeited.
+fn invoke_agent(args: Args, mut board: Board, player: Player) -> (f32, usize, usize) {
   let agent = args.get_agent(player);
 
   let handler = thread::spawn(move || {
@@ -76,7 +77,7 @@ fn main() {
   
   let mut player = Player::X;
   while !board.game_over() {
-    let (time, row, col) = invoked_solver(args.clone(), board.clone(), player);
+    let (time, row, col) = invoke_agent(args.clone(), board.clone(), player);
   
     board.apply_move((row, col), player);
     board.print();

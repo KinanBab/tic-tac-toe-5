@@ -13,7 +13,6 @@ pub enum Cell {
 
 impl Cell {
   pub fn to_string(&self) -> String {
-    // TODO(babman): make them colored.
     match self {
       Cell::X => format!("{}X{}", color::Fg(color::Green), color::Fg(color::Reset)),
       Cell::O => format!("{}O{}", color::Fg(color::Blue), color::Fg(color::Reset)),
@@ -31,7 +30,7 @@ pub enum Layout {
 }
 
 
-// The board state.
+// The board game state.
 #[derive(Clone)]
 pub struct Board {
   cells: Vec<Vec<Cell>>
@@ -74,6 +73,7 @@ impl Board {
     return Board { cells: board_cells };
   }
   
+  // Return all legal moves available on this board.
   pub fn moves(&self) -> Vec<(usize, usize)> {
     let mut moves = vec![];
     for i in 0..self.cells.len() {
@@ -86,10 +86,16 @@ impl Board {
     return moves;
   }
 
+  // Check if the game is over.
   pub fn game_over(&self) -> bool {
     return self.moves().len() == 0;
   }
 
+  // Score the game. This counts the number of 3 consecutive Xs and 3 consecutive Os,
+  // and returns their difference.
+  // If score > 0, then there are more consecutive Xs than Os, and the X player wins.
+  // If score < 0, then the O player wins.
+  // Score == 0 indicates a draw.
   pub fn score(&self) -> i32 {
     let mut score: i32 = 0;
     for i in 0..self.cells.len() {
@@ -144,7 +150,23 @@ impl Board {
 
     return score;
   }
-  
+
+  // Apply the given move to the board.
+  // This modifies the board, it does not copy it.
+  // To ensure independent moves do not interfer with each other in your min max
+  // implementation either:
+  //
+  // (1) copy the board before applying a move, e.g.
+  //        let board2 = board.clone();
+  //        board2.apply_move(m, player);
+  //
+  // (2) undo the move after it is no longer needed, e.g.
+  //        board.apply_move(m, player);
+  //        ... code that uses board here ...
+  //        board.undo_move(m, player);
+  //     You must undo the move before applying any other *independent* moves
+  //     to the board.
+  //     The value of player should be the same when applying and undoing a move.
   pub fn apply_move(&mut self, m: (usize, usize), player: Player) {
     if let Cell::Empty = self.cells[m.0][m.1] {
       match player {
@@ -156,6 +178,8 @@ impl Board {
     }
   }
   
+  // Undos the given move by the given player.
+  // Sets the location of the cell to empty, if it's content matches the player.
   pub fn undo_move(&mut self, m: (usize, usize), player: Player) {
     match (player, &self.cells[m.0][m.1]) {
       (Player::X, Cell::X) => self.cells[m.0][m.1] = Cell::Empty,
@@ -163,7 +187,8 @@ impl Board {
       _ => panic!("Illegal undo move"),
     }
   }
-  
+ 
+  // Print board to the screen. 
   pub fn print(&self) {
     println!("-----------");
     for row in &self.cells {
@@ -174,7 +199,10 @@ impl Board {
     }
     println!("-----------");
   }
-  
+ 
+  // Returns a read-only reference to the underlying 2D vec.
+  // You may use this in your heuristic to look at the values of specific cells,
+  // or loop over the entire board, etc.
   pub fn get_cells(&self) -> &Vec<Vec<Cell>> {
     return &self.cells;
   }
