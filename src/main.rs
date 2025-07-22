@@ -18,6 +18,7 @@ use std::{thread, process};
 
 const TIME_LIMIT: u64 = 1500;
 const WAKE_UP_COUNT: u64 = 100;
+const PRINTING_DELAY: u64 = 1000;  // in ms
 
 
 // Invoke the agent with a timer.
@@ -92,9 +93,10 @@ fn main() {
       }
     }
 
-    player = player.invert();
+    player = player.flip();
+    thread::sleep(Duration::from_millis(PRINTING_DELAY));
   }
-  
+
   let score = board.score();
   if score > 0 {
     println!("X wins. Final score {}", score);
