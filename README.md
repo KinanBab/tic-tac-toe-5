@@ -27,7 +27,7 @@ cargo run -- --x random --o random --layout 5
 
 Use the following command to play against the random agent, you will be the X player.
 ```bash
-cargo run -- -x manual --o random --layout 5
+cargo run -- --x manual --o random --layout 5
 ```
 
 ### Step 3: Explore
