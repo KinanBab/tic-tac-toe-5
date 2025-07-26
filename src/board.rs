@@ -1,6 +1,10 @@
 use crate::player::Player;
 
+#[cfg(not(windows))]
 use termion::color;
+
+#[cfg(windows)]
+use crate::color;
 
 // The contents of a single cell.
 #[derive(Clone, PartialEq, Eq)]

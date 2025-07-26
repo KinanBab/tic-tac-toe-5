@@ -5,6 +5,9 @@ mod manual;
 mod player;
 mod solution;
 
+#[cfg(windows)]
+pub mod color;
+
 use agents::{Agent, FirstMoveAgent, RandomAgent, TestAgent};
 use args::{Agents, Args};
 use board::Board;

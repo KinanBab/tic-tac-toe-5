@@ -2,7 +2,11 @@ use crate::agents::Agent;
 use crate::board::{Board, Cell};
 use crate::player::Player;
 
+#[cfg(not(windows))]
 use termion::color;
+
+#[cfg(windows)]
+use crate::color;
 
 // Agent that just prompts users to play the game via the terminal.
 pub struct ManualAgent {}
